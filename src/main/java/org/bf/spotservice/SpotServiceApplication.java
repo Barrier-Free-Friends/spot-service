@@ -1,4 +1,4 @@
-package org.bf.spotservice.spotservice;
+package org.bf.spotservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
