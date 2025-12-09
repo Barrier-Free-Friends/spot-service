@@ -12,5 +12,8 @@ public interface CollectionCommandService {
     // 컬렉션 생성
     CollectionIdDto createCollection(CreateDto dto);
 
+    // 컬렉션 삭제
+    void deleteCollection(Long collectionId);
+
 
 }

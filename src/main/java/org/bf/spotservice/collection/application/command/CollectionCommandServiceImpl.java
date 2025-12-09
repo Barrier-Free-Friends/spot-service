@@ -1,7 +1,9 @@
 package org.bf.spotservice.collection.application.command;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.security.SecurityUtil;
 import org.bf.global.infrastructure.exception.CustomException;
+import org.bf.global.security.SecurityUtils;
 import org.bf.spotservice.collection.application.command.dto.CreateDto;
 import org.bf.spotservice.collection.application.command.dto.UpdateDto;
 import org.bf.spotservice.collection.application.error.CollectionErrorCode;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CollectionCommandServiceImpl implements CollectionCommandService {
 
     private final CollectionRepository collectionRepository;
+    private final SecurityUtils securityUtils;
 
     @Override
     public void updateOpenCollection(Long id, UpdateDto dto) {
@@ -36,5 +39,14 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
         collectionRepository.save(collection);
         return collection.toDto();
 
+    }
+
+    @Override
+    public void deleteCollection(Long collectionId) {
+
+        Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
+
+        String username = securityUtils.getCurrentUsername();
+        collection.deleteCollection(username);
     }
 }

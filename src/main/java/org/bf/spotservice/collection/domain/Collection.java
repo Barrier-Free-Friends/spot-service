@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bf.global.domain.Auditable;
 import org.bf.spotservice.collection.application.command.dto.UpdateDto;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotIdDto;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "p_collections")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class Collection {
+public class Collection extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "collection_id")
@@ -51,5 +52,9 @@ public class Collection {
     public Collection(Boolean open, String name) {
         this.open = open;
         this.name = name;
+    }
+
+    public void deleteCollection(String username) {
+        softDelete(username);
     }
 }
