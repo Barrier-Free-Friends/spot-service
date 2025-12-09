@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: spot-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_URL}
@@ -37,3 +37,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://52.79.151.83:3150/eureka/
+
+server:
+  port: 3500
