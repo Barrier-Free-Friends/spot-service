@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.bf.spotservice.collection.domain.dto.CollectionDto;
 import org.bf.spotservice.collection.domain.dto.SpotDto;
+import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.collection.infrastructure.persistence.converter.SpotConverter;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class Collection {
     public CollectionDto toDto() {
         return new CollectionDto(
                 this.id,
-                this.spotIds.stream().map(SpotDto::new).toList()
+                this.spotIds.stream().map(SpotIdDto::new).toList()
         );
     }
 
