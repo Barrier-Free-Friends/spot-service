@@ -1,4 +1,4 @@
-package org.bf.spotservice.collection.domain.application.query;
+package org.bf.spotservice.collection.application.query;
 
 import org.bf.spotservice.collection.domain.dto.CollectionDto;
 
