@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bf.spotservice.collection.domain.CollectionDetailRepository;
 import org.bf.spotservice.collection.domain.CollectionRepository;
 import org.bf.spotservice.collection.domain.QCollection;
-import org.bf.spotservice.collection.domain.dto.CollectionDto;
+import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.spot.domain.QSpot;
 import org.bf.spotservice.spot.domain.SpotRepository;
 import org.springframework.stereotype.Repository;
@@ -21,29 +21,18 @@ public class CollectionDetailsDao implements CollectionDetailRepository {
     private final CollectionRepository collectionRepository;
     private final SpotRepository spotRepository;
     @Override
-    public List<CollectionDto> findAll() {
+    public List<CollectionIdDto> findAll() {
 
         QCollection collection = QCollection.collection;
         QSpot spot = QSpot.spot;
 
         // Spot 아이디 갯수만큼 Collection 조회 -> Collection 1개 -> List
-        List<CollectionDto> items = queryFactory
-                .select(Projections.constructor(CollectionDto.class, collection.id, spot))
+        List<CollectionIdDto> items = queryFactory
+                .select(Projections.constructor(CollectionIdDto.class, collection.id, spot))
                 .leftJoin(spot).on(spot.id.in(collection.spotIds))
                 .fetch();
 
         return items;
     }
 
-//    public CollectionDto findById(Long id) {
-//
-//        Collection collection = collectionRepository.findById(id).orElse(null);
-//        if (collection != null) {
-//            // Spot 목록
-//            List<Spot> spots = spotRepository.findAllById(collection.getSpots());
-//
-//        }
-//
-//        return new CollectionDto(....);
-//    }
 }

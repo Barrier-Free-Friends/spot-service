@@ -1,9 +1,9 @@
 package org.bf.spotservice.collection.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.bf.spotservice.collection.domain.dto.CollectionDto;
-import org.bf.spotservice.collection.domain.dto.SpotDto;
+import lombok.Getter;
+import lombok.ToString;
+import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.collection.infrastructure.persistence.converter.SpotConverter;
 
@@ -32,8 +32,8 @@ public class Collection {
     @Column(name = "collection_name")
     private String name;
 
-    public CollectionDto toDto() {
-        return new CollectionDto(
+    public CollectionIdDto toDto() {
+        return new CollectionIdDto(
                 this.id,
                 this.spotIds.stream().map(SpotIdDto::new).toList()
         );
