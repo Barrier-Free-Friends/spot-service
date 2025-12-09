@@ -1,6 +1,9 @@
 name: CI - Build & Test
 
 on:
+  push:
+    branches:
+      - '**'          # 모든 브랜치 push 에 대해 실행
   pull_request:
     branches:
       - '**'
