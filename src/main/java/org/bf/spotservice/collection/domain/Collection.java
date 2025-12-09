@@ -3,6 +3,7 @@ package org.bf.spotservice.collection.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
+import org.bf.spotservice.collection.application.command.dto.UpdateDto;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.collection.infrastructure.persistence.converter.SpotConverter;
@@ -39,10 +40,10 @@ public class Collection {
         );
     }
 
-    // 공개 여부 업데이트
-    public void updateOpen(Boolean open, String name) {
-        this.open = open;
-        this.name = name;
+    // 컬렉션 공개 여부 및 이름 업데이트
+    public void updateOpenAndName(UpdateDto dto) {
+        this.open = dto.isOpen();
+        this.name = dto.name();
     }
 
 
