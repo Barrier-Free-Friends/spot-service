@@ -2,6 +2,7 @@ package org.bf.spotservice.collection.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bf.spotservice.collection.application.command.dto.UpdateDto;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "p_collections")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Collection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +48,8 @@ public class Collection {
         this.name = dto.name();
     }
 
-
+    public Collection(Boolean open, String name) {
+        this.open = open;
+        this.name = name;
+    }
 }
