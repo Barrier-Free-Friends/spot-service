@@ -12,11 +12,13 @@ import org.bf.spotservice.collection.domain.dto.SpotDto;
 import org.bf.spotservice.spot.domain.Spot;
 import org.bf.spotservice.spot.domain.SpotRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CollectionQueryServiceImpl implements CollectionQueryService {
 
     private final CollectionRepository collectionRepository;
