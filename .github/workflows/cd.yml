@@ -1,7 +1,14 @@
 name: Deploy to AWS ECS Fargate
+#on:
+#  push:
+#    branches: [ "main" ] # main 브랜치 merge 트리거 되었을 경우
+
 on:
-  push:
-    branches: [ "main" ] # main 브랜치 merge 트리거 되었을 경우
+  pull_request:
+    branches:
+      - main
+      - dev
+      - '**'
 
 env:
   # AWS 및 ECR 설정
@@ -17,6 +24,9 @@ env:
   CONTAINER_NAME: spot-service-container   # Task Definition 내부의 컨테이너 이름
 jobs:
   Deploy:
+
+    if: github.head_ref == 'feat/#3-collection-application-layer'
+
     name: Build Docker Image and Deploy ECS
     runs-on: ubuntu-latest
     # 깃허브 토큰 관련 권한 제거 (secrets.MY_GITHUB_TOKEN도 필요 없어짐)
