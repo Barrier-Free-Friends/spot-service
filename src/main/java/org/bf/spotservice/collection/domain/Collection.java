@@ -57,4 +57,9 @@ public class Collection extends Auditable {
     public void deleteCollection(String username) {
         softDelete(username);
     }
+
+    public void addSpotId(Long spotId) {
+
+        this.spotIds.add(spotId);
+    }
 }

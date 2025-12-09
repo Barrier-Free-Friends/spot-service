@@ -15,5 +15,7 @@ public interface CollectionCommandService {
     // 컬렉션 삭제
     void deleteCollection(Long collectionId);
 
+    // 컬렉션에 장소 저장
+    CollectionIdDto addSpotIdToCollection(Long collectionId, Long spotId);
 
 }
