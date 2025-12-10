@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: spot-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: ${DB_DDL_AUTO}
+    open-in-view: false
+    generate-ddl: true
+  config:
+    import: 'optional:configserver: '
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: localhost
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://34.47.77.34:3150/eureka/
+
+# OPEN DOC API 설정
+springdoc:
+  version: '1.0.0'
+  api-docs:
+    path: /v3/api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /api-docs.html
+    disable-swagger-default-url: true
+    doc-expansion:
+  paths-to-match:
+    - /**
+
+#jwt:
+#  secret: ${JWT_SECRET}
+#  access-token-expiration: ${ACCESS_TOKEN_EXPIRATION}
+#  refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION}
+
+server:
+  port: 8080
