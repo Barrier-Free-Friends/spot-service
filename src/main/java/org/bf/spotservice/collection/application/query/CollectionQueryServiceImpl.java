@@ -2,6 +2,7 @@ package org.bf.spotservice.collection.application.query;
 
 import lombok.RequiredArgsConstructor;
 import org.bf.global.infrastructure.exception.CustomException;
+import org.bf.spotservice.collection.application.dto.CollectionRankDto;
 import org.bf.spotservice.collection.application.error.CollectionErrorCode;
 import org.bf.spotservice.collection.domain.Collection;
 import org.bf.spotservice.collection.domain.CollectionDetailRepository;
@@ -11,6 +12,8 @@ import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotDto;
 import org.bf.spotservice.spot.domain.Spot;
 import org.bf.spotservice.spot.domain.SpotRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +62,12 @@ public class CollectionQueryServiceImpl implements CollectionQueryService {
                 .spots(spotDtoList)
                 .build();
 
+    }
+
+    // fork 기준 컬렉션 랭킹 조회
+    @Override
+    public Page<CollectionRankDto> getCollectionsByFork(Pageable pageable) {
+
+        return collectionDetailRepository.findCollectionByForkDesc(pageable);
     }
 }
