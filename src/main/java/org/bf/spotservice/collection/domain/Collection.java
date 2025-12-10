@@ -37,6 +37,8 @@ public class Collection extends Auditable {
     @Column(name = "collection_name")
     private String name;
 
+    private int fork;
+
     public Collection(UUID userId, Boolean open, String name) {
         this.userId = userId;
         this.open = open;
