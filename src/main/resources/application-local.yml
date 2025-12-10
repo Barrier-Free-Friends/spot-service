@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: spot-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_URL}
@@ -57,4 +57,4 @@ springdoc:
 #  refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION}
 
 server:
-  port: 3000
+  port: 8080
