@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bf.global.domain.Auditable;
+import org.bf.global.infrastructure.exception.CustomException;
 import org.bf.spotservice.collection.application.command.dto.UpdateDto;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.collection.infrastructure.persistence.converter.SpotConverter;
+import org.bf.spotservice.spot.application.error.SpotErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +75,13 @@ public class Collection extends Auditable {
     public void addSpotId(Long spotId) {
 
         this.spotIds.add(spotId);
+    }
+
+    public void removeSpotId(Long spotId) {
+
+        if (!this.spotIds.contains(spotId)) {
+            throw new CustomException(SpotErrorCode.SPOT_NOT_FOUND);
+        }
+        this.spotIds.remove(spotId);
     }
 }

@@ -62,4 +62,15 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
 
         return collection.toDto();
     }
+
+    @Override
+    public CollectionIdDto removeSpotIdFromCollection(Long collectionId, Long spotId) {
+
+        Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
+
+        collection.removeSpotId(spotId);
+
+        return collection.toDto();
+
+    }
 }
