@@ -39,7 +39,7 @@ public class Collection extends Auditable {
     @Column(name = "collection_name")
     private String name;
 
-    private int fork;
+    private int fork = 0;
 
     public Collection(UUID userId, Boolean open, String name) {
         this.userId = userId;
@@ -83,5 +83,21 @@ public class Collection extends Auditable {
             throw new CustomException(SpotErrorCode.SPOT_NOT_FOUND);
         }
         this.spotIds.remove(spotId);
+    }
+
+    public void incrementFork() {
+        this.fork += 1;
+    }
+
+    public static Collection createForkedCollection(Collection originalCollection, UUID newUserId) {
+        Collection forkedCollection = new Collection(newUserId, true, "Forked: " + originalCollection.getName());
+
+        List<Long> originalSpotIds = originalCollection.getSpotIds() == null ? new ArrayList<>() : originalCollection.getSpotIds();
+
+        for (Long spotId : originalSpotIds) {
+            forkedCollection.addSpotId(spotId);
+        }
+
+        return forkedCollection;
     }
 }
