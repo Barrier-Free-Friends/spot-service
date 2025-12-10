@@ -88,4 +88,39 @@ class CollectionCommandServiceImplTest {
         assertThat(result.spots()).hasSize(1);
         assertThat(result.spots().get(0).id()).isEqualTo(spotId);
     }
+
+    @Test
+    @DisplayName("컬렉션 포크 테스트")
+    void 컬렉션_fork() {
+
+        Long originalCollectionId = 1L;
+        UUID myId = UUID.randomUUID();
+        UUID originalOwnerId = UUID.randomUUID();
+
+        Collection originalCollection = new Collection(UUID.randomUUID(), true, "원본 컬렉션");
+        ReflectionTestUtils.setField(originalCollection, "id", originalCollectionId);
+        originalCollection.addSpotId(100L);
+        originalCollection.addSpotId(200L);
+
+        Optional<Collection> collectionId = collectionRepository.findByCollectionId(originalCollectionId);
+        given(collectionId).willReturn(Optional.of(originalCollection));
+
+        // 저장 시 새로운 id(2L) 부여
+        given(collectionRepository.save(any(Collection.class))).willAnswer(invocation -> {
+            Collection c = invocation.getArgument(0);
+            ReflectionTestUtils.setField(c, "id", 2L);
+            return c;
+        });
+
+        // when
+        CollectionIdDto result = collectionCommandService.forkCollection(originalCollectionId, myId);
+
+        // then
+        assertThat(originalCollection.getFork()).isEqualTo(1);
+        assertThat(result.id()).isEqualTo(2L);
+
+        assertThat(result.spots()).hasSize(2);
+        assertThat(result.spots()).extracting("id").containsExactly(100L, 200L);
+
+    }
 }

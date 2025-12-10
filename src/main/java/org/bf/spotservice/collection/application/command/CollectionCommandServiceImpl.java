@@ -14,6 +14,8 @@ import org.bf.spotservice.spot.domain.SpotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -72,5 +74,23 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
 
         return collection.toDto();
 
+    }
+
+    @Override
+    public CollectionIdDto forkCollection(Long originalCollectionId, UUID userId) {
+
+        Collection originalCollection = collectionRepository.findByCollectionId(originalCollectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
+
+        if (Boolean.FALSE.equals(originalCollection.getOpen())) {
+          throw new CustomException(CollectionErrorCode.COLLECTION_NOT_PUBLIC);
+        }
+
+        originalCollection.incrementFork();
+
+        Collection newCollection = Collection.createForkedCollection(originalCollection, userId);
+
+        Collection savedForkedCollection = collectionRepository.save(newCollection);
+
+        return savedForkedCollection.toDto();
     }
 }
