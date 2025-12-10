@@ -10,6 +10,7 @@ import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
 import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.collection.infrastructure.persistence.converter.SpotConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,11 +25,11 @@ public class Collection extends Auditable {
     @Column(name = "collection_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private UUID userId;
 
     @Convert(converter = SpotConverter.class)
-    private List<Long> spotIds;
+    private List<Long> spotIds = new ArrayList<>();
 
     @Column(name = "is_open", nullable = false)
     private Boolean open;
@@ -36,10 +37,19 @@ public class Collection extends Auditable {
     @Column(name = "collection_name")
     private String name;
 
+    public Collection(UUID userId, Boolean open, String name) {
+        this.userId = userId;
+        this.open = open;
+        this.name = name;
+    }
+
     public CollectionIdDto toDto() {
+
+        List<SpotIdDto> spotIdDtos = (this.spotIds == null) ? List.of() : this.spotIds.stream().map(SpotIdDto::new).toList();
+
         return new CollectionIdDto(
                 this.id,
-                this.spotIds.stream().map(SpotIdDto::new).toList()
+                spotIdDtos
         );
     }
 
