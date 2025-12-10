@@ -1,5 +1,10 @@
 package org.bf.spotservice;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +25,11 @@ public class SpotController {
     private final SpotService spotService;
 
     @PostMapping("/spots")
-    public CustomResponse<SpotDto> createSpot(@RequestBody SpotRequest.createSpotRequest request) {
+    @Operation(description = "새로운 spot 정보를 등록합니다.")
+    public CustomResponse<SpotDto> createSpot(
+            @RequestBody
+            @Parameter(description = "생성할 spot 정보", required = true)
+            SpotRequest.createSpotRequest request) {
         SpotDto spotDto = spotService.createSpot(request);
         return CustomResponse.onSuccess(GeneralSuccessCode.CREATED, spotDto);
     }
