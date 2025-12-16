@@ -33,7 +33,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://34.47.77.34:3150/eureka/
+      defaultZone: http://52.79.151.83:3150/eureka/
 
 # OPEN DOC API 설정
 springdoc:
