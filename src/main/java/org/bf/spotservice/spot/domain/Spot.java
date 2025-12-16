@@ -3,15 +3,17 @@ package org.bf.spotservice.spot.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @Getter
 @Entity
-@Table(name="p_spot")
+@Table(name = "p_spot")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Spot {
     @Id
-    @Column(name="spot_id")
+    @Column(name = "spot_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
