@@ -30,6 +30,8 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
 
         Collection collection = collectionRepository.findById(id).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
 
+        collectionRepository.save(collection);
+
         collection.updateOpenAndName(dto);
     }
 
@@ -38,7 +40,7 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
 
         // 컬렉션을 먼저 만들고 나중에 스팟을 추가하는 방식
         // 따라서 생성시에는 스팟 아이디가 비어있음
-        Collection collection = new Collection(dto.isOpen(), dto.name());
+        Collection collection = new Collection(dto.userId(), dto.isOpen(), dto.name());
 
         collectionRepository.save(collection);
         return collection.toDto();

@@ -1,6 +1,5 @@
 package org.bf.spotservice.collection.infrastructure.persistence;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +8,10 @@ import org.bf.spotservice.collection.domain.Collection;
 import org.bf.spotservice.collection.domain.CollectionDetailRepository;
 import org.bf.spotservice.collection.domain.CollectionRepository;
 import org.bf.spotservice.collection.domain.QCollection;
-import org.bf.spotservice.collection.domain.dto.CollectionDto;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
+import org.bf.spotservice.collection.domain.dto.SpotIdDto;
 import org.bf.spotservice.spot.domain.QSpot;
+import org.bf.spotservice.spot.domain.Spot;
 import org.bf.spotservice.spot.domain.SpotRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +19,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -33,13 +37,37 @@ public class CollectionDetailsDao implements CollectionDetailRepository {
         QCollection collection = QCollection.collection;
         QSpot spot = QSpot.spot;
 
-        // Spot 아이디 갯수만큼 Collection 조회 -> Collection 1개 -> List
-        List<CollectionIdDto> items = queryFactory
-                .select(Projections.constructor(CollectionIdDto.class, collection.id, spot))
-                .leftJoin(spot).on(spot.id.in(collection.spotIds))
+        List<Collection> collections = queryFactory.selectFrom(collection).fetch();
+
+        if (collections.isEmpty()) {
+            return List.of();
+        }
+
+        // id로 중복 제거된 Spot Ids 가져오기
+        List<Long> allSpotIds = collections.stream()
+                .flatMap(c -> c.getSpotIds().stream())
+                .distinct()
+                .toList();
+
+        // spots들 한 번에 조회
+        List<Spot> spots = queryFactory
+                .selectFrom(spot)
+                .where(spot.id.in(allSpotIds))
                 .fetch();
 
-        return items;
+        Map<Long, Spot> spotMap = spots.stream()
+                .collect(Collectors.toMap(Spot::getId, sp -> sp));
+
+        return collections.stream()
+                .map(c -> {
+                    List<SpotIdDto> spotIdDtos = c.getSpotIds().stream()
+                            .map(spotMap::get)
+                            .filter(Objects::nonNull)
+                            .map(s -> new SpotIdDto(s.getId()))
+                            .toList();
+
+                    return new CollectionIdDto(c.getId(), spotIdDtos);
+                }).toList();
     }
 
     @Override
