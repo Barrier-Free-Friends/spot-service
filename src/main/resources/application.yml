@@ -24,18 +24,10 @@ spring:
         enabled: true
         service-id: config-server
 
-
-#eureka:
-#  instance:
-#    prefer-ip-address: false
-#    hostname: ecs-load-balancer-597540403.ap-northeast-2.elb.amazonaws.com
-#    non-secure-port: 3500
-#    health-check-url-path: /actuator/health
-
 eureka:
   instance:
-    prefer-ip-address: true
-    ip-address: ${spring.cloud.client.ip-address}
+    prefer-ip-address: false
+    hostname: ecs-load-balancer-597540403.ap-northeast-2.elb.amazonaws.com
     non-secure-port: 3500
     health-check-url-path: /actuator/health
 
