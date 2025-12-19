@@ -1,6 +1,7 @@
 package org.bf.spotservice.collection.application.query;
 
 import org.bf.global.infrastructure.exception.CustomException;
+import org.bf.global.security.SecurityUtils;
 import org.bf.spotservice.collection.application.dto.CollectionRankDto;
 import org.bf.spotservice.collection.domain.Collection;
 import org.bf.spotservice.collection.domain.CollectionDetailRepository;
@@ -24,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,20 +46,25 @@ class CollectionQueryServiceImplTest {
     @Mock
     private SpotRepository spotRepository;
 
+    @Mock
+    private SecurityUtils securityUtils;
+
     @InjectMocks
     private CollectionQueryServiceImpl collectionQueryServiceImpl;
 
 
     @BeforeEach
     void setUp() {
-        collectionQueryServiceImpl = new CollectionQueryServiceImpl(collectionRepository, collectionDetailRepository, spotRepository);
+        collectionQueryServiceImpl = new CollectionQueryServiceImpl(collectionRepository, collectionDetailRepository, securityUtils, spotRepository);
     }
 
     @Test
     void 갖고_있는_컬렉션_조회_비어있지_않다() {
 
+        UUID userId = collectionRepository.findById(1L).orElseThrow().getUserId();
+
         List<CollectionIdDto> dtoList = List.of(mock(CollectionIdDto.class));
-        when(collectionDetailRepository.findAll()).thenReturn(dtoList);
+        when(collectionDetailRepository.findAll(userId)).thenReturn(dtoList);
 
         List<CollectionIdDto> collections = collectionQueryServiceImpl.getCollections();
 
@@ -65,22 +72,25 @@ class CollectionQueryServiceImplTest {
         assertThat(collections).isEqualTo(dtoList);
 
         // 메서드가 정확히 한 번 호출되었는지 검증
-        verify(collectionDetailRepository, times(1)).findAll();
+        verify(collectionDetailRepository, times(1)).findAll(userId);
     }
 
     @Test
     void 갖고_있는_컬렉션이_없는_경우() {
-        when(collectionDetailRepository.findAll()).thenReturn(List.of());
+        UUID userId = collectionRepository.findById(1L).orElseThrow().getUserId();
+
+        when(collectionDetailRepository.findAll(userId)).thenReturn(List.of());
 
         CustomException e = assertThrows(CustomException.class, () -> collectionQueryServiceImpl.getCollections());
         assertNotNull(e);
-        verify(collectionDetailRepository, times(1)).findAll();
+        verify(collectionDetailRepository, times(1)).findAll(userId);
     }
 
 
     @Test
     void 특정_컬렉션_상세_조회() {
         Long collectionId = 1L;
+        UUID userId = collectionRepository.findById(1L).orElseThrow().getUserId();
 
         Collection collection = mock(Collection.class);
         when(collectionRepository.findById(collectionId)).thenReturn(Optional.of(collection));
@@ -96,7 +106,7 @@ class CollectionQueryServiceImplTest {
 
         when(spotRepository.findAllById(List.of(10L, 20L))).thenReturn(List.of(spot));
 
-        CollectionDto collectionDto = collectionQueryServiceImpl.getCollection(collectionId);
+        CollectionDto collectionDto = collectionQueryServiceImpl.getCollection(collectionId, userId);
 
         assertThat(collectionDto.id()).isEqualTo(collectionId);
         assertThat(collectionDto.spots()).hasSize(1);

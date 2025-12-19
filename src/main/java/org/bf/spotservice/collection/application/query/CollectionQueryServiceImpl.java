@@ -2,6 +2,7 @@ package org.bf.spotservice.collection.application.query;
 
 import lombok.RequiredArgsConstructor;
 import org.bf.global.infrastructure.exception.CustomException;
+import org.bf.global.security.SecurityUtils;
 import org.bf.spotservice.collection.application.dto.CollectionRankDto;
 import org.bf.spotservice.collection.application.error.CollectionErrorCode;
 import org.bf.spotservice.collection.domain.Collection;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class CollectionQueryServiceImpl implements CollectionQueryService {
 
     private final CollectionRepository collectionRepository;
     private final CollectionDetailRepository collectionDetailRepository;
+    private final SecurityUtils securityUtils;
 
     private final SpotRepository spotRepository;
 
@@ -34,7 +37,9 @@ public class CollectionQueryServiceImpl implements CollectionQueryService {
     @Override
     public List<CollectionIdDto> getCollections() {
 
-        List<CollectionIdDto> collections = collectionDetailRepository.findAll();
+        UUID currentUserId = securityUtils.getCurrentUserId();
+
+        List<CollectionIdDto> collections = collectionDetailRepository.findAll(currentUserId);
 
         if (collections.isEmpty()) {
             throw  new CustomException(CollectionErrorCode.COLLECTION_EMPTY);
@@ -44,9 +49,13 @@ public class CollectionQueryServiceImpl implements CollectionQueryService {
 
     // 특정 컬렉션 상세 조회
     @Override
-    public CollectionDto getCollection(Long id) {
+    public CollectionDto getCollection(Long id, UUID userId) {
 
         Collection collection = collectionRepository.findById(id).orElseThrow((() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND)));
+
+        if (!collection.getUserId().equals(userId)) {
+            throw new CustomException(CollectionErrorCode.COLLECTION_ACCESS_DENIED);
+        }
 
         // Spot 목록을 가져온다
         List<Spot> spots = spotRepository.findAllById(collection.getSpotIds());
@@ -67,6 +76,8 @@ public class CollectionQueryServiceImpl implements CollectionQueryService {
     // fork 기준 컬렉션 랭킹 조회
     @Override
     public Page<CollectionRankDto> getCollectionsByFork(Pageable pageable) {
+        UUID currentUserId = securityUtils.getCurrentUserId();
+        System.out.println("Current User ID: " + currentUserId);
 
         return collectionDetailRepository.findCollectionByForkDesc(pageable);
     }
