@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CollectionQueryService {
 
@@ -14,7 +15,7 @@ public interface CollectionQueryService {
     List<CollectionIdDto> getCollections();
 
     // 특정 컬렉션 조회
-    CollectionDto getCollection(Long id);
+    CollectionDto getCollection(Long id, UUID userId);
 
     // 컬렉션 랭킹 조회
     Page<CollectionRankDto> getCollectionsByFork(Pageable pageable);

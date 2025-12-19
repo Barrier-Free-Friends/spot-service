@@ -50,6 +50,8 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
     @Override
     public void deleteCollection(Long collectionId) {
 
+        securityUtils.getCurrentUserId();
+
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
 
         String username = securityUtils.getCurrentUsername();
