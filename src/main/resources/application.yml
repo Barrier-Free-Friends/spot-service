@@ -39,3 +39,12 @@ eureka:
 
 server:
   port: 3500
+
+# 낙관적 락 재사용 설정
+spotservice:
+  optimistic-lock:
+    retry:
+      maxAttempts: 3
+      initialDelayMs: 100
+      multiplier: 2.0
+      maxDelayMs: 1000
