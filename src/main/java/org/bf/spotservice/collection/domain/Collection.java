@@ -41,6 +41,9 @@ public class Collection extends Auditable {
 
     private int fork = 0;
 
+    @Version
+    private Long version = 0L;
+
     public Collection(UUID userId, Boolean open, String name) {
         this.userId = userId;
         this.open = open;

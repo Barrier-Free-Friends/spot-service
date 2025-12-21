@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -32,12 +33,15 @@ public class CollectionDetailsDao implements CollectionDetailRepository {
     private final CollectionRepository collectionRepository;
     private final SpotRepository spotRepository;
     @Override
-    public List<CollectionIdDto> findAll() {
+    public List<CollectionIdDto> findAll(UUID userId) {
 
         QCollection collection = QCollection.collection;
         QSpot spot = QSpot.spot;
 
-        List<Collection> collections = queryFactory.selectFrom(collection).fetch();
+        List<Collection> collections = queryFactory
+                .selectFrom(collection)
+                .where(collection.userId.eq(userId))
+                .fetch();
 
         if (collections.isEmpty()) {
             return List.of();

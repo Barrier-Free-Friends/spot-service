@@ -9,6 +9,7 @@ import org.bf.spotservice.collection.application.error.CollectionErrorCode;
 import org.bf.spotservice.collection.domain.Collection;
 import org.bf.spotservice.collection.domain.CollectionRepository;
 import org.bf.spotservice.collection.domain.dto.CollectionIdDto;
+import org.bf.spotservice.collection.support.RetryOnOptimisticLock;
 import org.bf.spotservice.spot.application.error.SpotErrorCode;
 import org.bf.spotservice.spot.domain.SpotRepository;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,8 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
     @Override
     public void deleteCollection(Long collectionId) {
 
+        securityUtils.getCurrentUserId();
+
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));
 
         String username = securityUtils.getCurrentUsername();
@@ -79,6 +82,7 @@ public class CollectionCommandServiceImpl implements CollectionCommandService {
     }
 
     @Override
+    @RetryOnOptimisticLock
     public CollectionIdDto forkCollection(Long originalCollectionId, UUID userId) {
 
         Collection originalCollection = collectionRepository.findByCollectionId(originalCollectionId).orElseThrow(() -> new CustomException(CollectionErrorCode.COLLECTION_NOT_FOUND));

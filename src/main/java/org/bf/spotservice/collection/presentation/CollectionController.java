@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.bf.global.infrastructure.CustomResponse;
 import org.bf.global.infrastructure.success.GeneralSuccessCode;
+import org.bf.global.security.SecurityUtils;
 import org.bf.spotservice.collection.application.command.CollectionCommandService;
 import org.bf.spotservice.collection.application.command.dto.CreateDto;
 import org.bf.spotservice.collection.application.command.dto.UpdateDto;
@@ -56,8 +57,6 @@ public class CollectionController {
     }
 
     @GetMapping("/collection/all")
-//    @GetMapping("/collection/{userId}/all")
-    // 유저 연결 후 수정해야함
     @Operation(description = "컬렉션 조회 - 사용자가 갖고 있는 컬렉션을 조회하고 각 컬렉션에는 spot id 목록만 반환합니다.")
     public CustomResponse<?> getCollection() {
 
@@ -67,9 +66,9 @@ public class CollectionController {
 
     @GetMapping("/collection/{collectionId}")
     @Operation(description = "컬렉션 상세 조회 - 특정 컬렉션의 상세 정보를 조회합니다.")
-    public CustomResponse<?> getCollection(@PathVariable("collectionId") Long collectionId) {
+    public CustomResponse<?> getCollection(@PathVariable("collectionId") Long collectionId, SecurityUtils securityUtils) {
 
-        CollectionDto collectionDto = collectionQueryService.getCollection(collectionId);
+        CollectionDto collectionDto = collectionQueryService.getCollection(collectionId, securityUtils.getCurrentUserId());
         return CustomResponse.onSuccess(GeneralSuccessCode.OK, collectionDto);
     }
 
